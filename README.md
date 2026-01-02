@@ -1,65 +1,106 @@
 # Flocking in Rust
 
-A Rust implementation of flocking behavior using the macroquad game framework. Watch colorful arrows form flocks, avoid your mouse cursor, and move together in mesmerizing patterns!
+A client-server implementation of flocking behavior using Rust and WebSockets. The server handles all physics calculations, while the browser client renders the simulation and provides real-time parameter controls.
 
-## Features
+## Architecture
 
-- **Flocking Behavior**: Arrows exhibit three classic flocking behaviors:
-  - **Separation**: Maintains distance from nearby neighbors
-  - **Alignment**: Matches direction with nearby neighbors
-  - **Cohesion**: Moves toward the center of nearby neighbors
+- **Server** (Rust): Runs game loop at 60 FPS, calculates arrow physics, flocking, and obstacle avoidance
+- **Client** (Browser): Renders arrows and obstacles, sends mouse click events to create obstacles, provides parameter controls
+- **Communication**: WebSocket for real-time bidirectional communication
 
-- **Mouse Avoidance**: Arrows dynamically avoid the mouse cursor when it gets too close
+## Project Structure
 
-- **Physics System**: 
-  - Velocity and acceleration-based movement
-  - Speed capped between 0 and 100
-  - Arrows automatically point in their direction of movement
-
-- **Edge Wrapping**: Arrows wrap around screen edges seamlessly
+```
+flocking-in-rust/
+├── server/          # Rust WebSocket server
+│   ├── src/
+│   │   ├── main.rs  # WebSocket server + game loop
+│   │   ├── game.rs  # Game state management
+│   │   └── arrow.rs # Arrow physics and flocking logic
+│   └── Cargo.toml
+├── client/          # Web client
+│   ├── index.html   # UI with parameter controls
+│   └── client.js    # WebSocket client + rendering
+└── shared/          # Shared message types
+    └── src/
+        └── messages.rs
+```
 
 ## Running
 
-Make sure you have Rust installed, then run:
-
+1. Start the server:
 ```bash
+cd server
 cargo run
 ```
 
-The first run will download and compile dependencies (including macroquad), which may take a minute.
+The server will start on `http://localhost:3000`
 
-## Project Evolution
+2. Open your browser and navigate to:
+```
+http://localhost:3000
+```
 
-This project started as a simple demo of moving squares and evolved into a full flocking simulation:
+## Features
 
-1. **Started with squares** moving left to right
-2. **Converted to arrows** with rotation
-3. **Added physics** with velocity and acceleration vectors
-4. **Implemented mouse avoidance** for interactive behavior
-5. **Added flocking** with separation, alignment, and cohesion behaviors
+### Flocking Behavior
+Arrows exhibit three classic flocking behaviors:
+- **Separation**: Maintains distance from nearby neighbors
+- **Alignment**: Matches direction with nearby neighbors
+- **Cohesion**: Moves toward the center of nearby neighbors
 
-## Code Structure
+### Interactive Controls
+- **Click to Create Obstacles**: Click anywhere on the canvas to create white sphere obstacles
+- **Clear Obstacles Button**: Remove all obstacles with one click
+- **Real-time Parameter Adjustment**: Control panel with sliders for all flocking parameters:
+  - Max Speed
+  - Obstacle Avoidance (Distance & Strength)
+  - Separation (Distance & Strength)
+  - Alignment (Distance & Strength)
+  - Cohesion (Distance & Strength)
 
-- `src/main.rs` - Main game loop and arrow initialization
-- `src/arrow.rs` - Arrow struct with flocking logic and rendering
+### Physics System
+- Velocity and acceleration-based movement
+- Speed capped between 0 and 100
+- Arrows automatically point in their direction of movement
+- Edge wrapping: Arrows wrap around screen edges seamlessly
+
+### Real-time Updates
+- Server broadcasts game state at ~30 FPS to all connected clients
+- Parameter changes are applied immediately
+- Multiple clients can connect and see the same simulation
 
 ## Customization
 
-You can adjust flocking behavior by modifying constants in `src/arrow.rs`:
+All parameters can be adjusted in real-time using the control panel in the browser:
 
-- `SEPARATION_DISTANCE` - How far apart arrows try to stay (default: 70.0)
-- `ALIGNMENT_DISTANCE` - Range for alignment behavior (default: 120.0)
-- `COHESION_DISTANCE` - Range for cohesion behavior (default: 200.0)
-- `SEPARATION_STRENGTH` - Strength of separation force (default: 0.3)
-- `ALIGNMENT_STRENGTH` - Strength of alignment force (default: 0.25)
-- `COHESION_STRENGTH` - Strength of cohesion force (default: 0.3)
-- `MAX_SPEED` - Maximum arrow speed (default: 5.0)
-- `MOUSE_AVOIDANCE_DISTANCE` - Mouse avoidance range (default: 100.0)
-- `MOUSE_AVOIDANCE_STRENGTH` - Mouse avoidance force (default: 0.5)
+- **Max Speed** (0-20): Maximum arrow velocity
+- **Obstacle Avoidance Distance** (0-200): How far arrows start avoiding obstacles
+- **Obstacle Avoidance Strength** (0-2): Force of obstacle avoidance
+- **Separation Distance** (0-200): Distance arrows try to maintain from neighbors
+- **Separation Strength** (0-2): Force of separation behavior
+- **Alignment Distance** (0-300): Range for alignment behavior
+- **Alignment Strength** (0-2): Force of alignment behavior
+- **Cohesion Distance** (0-400): Range for cohesion behavior
+- **Cohesion Strength** (0-2): Force of cohesion behavior
+
+Default values are optimized for smooth flocking behavior, but you can experiment with different combinations to see various effects!
 
 ## Dependencies
 
-- [macroquad](https://github.com/not-fl3/macroquad) - A simple and easy game framework for Rust
+### Server
+- [axum](https://github.com/tokio-rs/axum) - Web framework with WebSocket support
+- [tokio](https://tokio.rs/) - Async runtime
+- [serde](https://serde.rs/) - Serialization framework
+- [tower-http](https://github.com/tower-rs/tower-http) - HTTP utilities including static file serving
+
+## Development
+
+The project is organized into three main components:
+
+1. **Server** (`server/`): Rust backend that runs the simulation
+2. **Client** (`client/`): HTML/JavaScript frontend for visualization and control
+3. **Shared** (`shared/`): Common message types used for client-server communication
 
 ## License
 

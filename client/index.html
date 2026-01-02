@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flocking in Rust - Client</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1a1a1a;
+            display: flex;
+            font-family: Arial, sans-serif;
+            color: #fff;
+        }
+        #canvas-container {
+            position: relative;
+        }
+        #canvas {
+            border: 1px solid #333;
+            cursor: crosshair;
+            display: block;
+        }
+        #status {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #fff;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+        #controls {
+            width: 300px;
+            padding: 20px;
+            background: #2a2a2a;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+        .control-group {
+            margin-bottom: 20px;
+        }
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #ccc;
+        }
+        .control-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .control-row input[type="range"] {
+            flex: 1;
+        }
+        .control-row input[type="number"] {
+            width: 60px;
+            padding: 5px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 3px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #ff6666;
+        }
+        h2 {
+            margin-top: 0;
+            font-size: 18px;
+            border-bottom: 2px solid #444;
+            padding-bottom: 10px;
+        }
+        h3 {
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <h2>Flocking Controls</h2>
+        
+        <h3>Speed</h3>
+        <div class="control-group">
+            <label>Max Speed</label>
+            <div class="control-row">
+                <input type="range" id="max_speed" min="0" max="20" step="0.1" value="5.0">
+                <input type="number" id="max_speed_val" min="0" max="20" step="0.1" value="5.0">
+            </div>
+        </div>
+
+        <h3>Obstacle Avoidance</h3>
+        <div class="control-group">
+            <label>Avoidance Distance</label>
+            <div class="control-row">
+                <input type="range" id="obstacle_avoidance_distance" min="0" max="200" step="1" value="100">
+                <input type="number" id="obstacle_avoidance_distance_val" min="0" max="200" step="1" value="100">
+            </div>
+        </div>
+        <div class="control-group">
+            <label>Avoidance Strength</label>
+            <div class="control-row">
+                <input type="range" id="obstacle_avoidance_strength" min="0" max="2" step="0.1" value="0.5">
+                <input type="number" id="obstacle_avoidance_strength_val" min="0" max="2" step="0.1" value="0.5">
+            </div>
+        </div>
+
+        <h3>Flocking - Separation</h3>
+        <div class="control-group">
+            <label>Separation Distance</label>
+            <div class="control-row">
+                <input type="range" id="separation_distance" min="0" max="200" step="1" value="70">
+                <input type="number" id="separation_distance_val" min="0" max="200" step="1" value="70">
+            </div>
+        </div>
+        <div class="control-group">
+            <label>Separation Strength</label>
+            <div class="control-row">
+                <input type="range" id="separation_strength" min="0" max="2" step="0.05" value="0.3">
+                <input type="number" id="separation_strength_val" min="0" max="2" step="0.05" value="0.3">
+            </div>
+        </div>
+
+        <h3>Flocking - Alignment</h3>
+        <div class="control-group">
+            <label>Alignment Distance</label>
+            <div class="control-row">
+                <input type="range" id="alignment_distance" min="0" max="300" step="1" value="120">
+                <input type="number" id="alignment_distance_val" min="0" max="300" step="1" value="120">
+            </div>
+        </div>
+        <div class="control-group">
+            <label>Alignment Strength</label>
+            <div class="control-row">
+                <input type="range" id="alignment_strength" min="0" max="2" step="0.05" value="0.25">
+                <input type="number" id="alignment_strength_val" min="0" max="2" step="0.05" value="0.25">
+            </div>
+        </div>
+
+        <h3>Flocking - Cohesion</h3>
+        <div class="control-group">
+            <label>Cohesion Distance</label>
+            <div class="control-row">
+                <input type="range" id="cohesion_distance" min="0" max="400" step="1" value="200">
+                <input type="number" id="cohesion_distance_val" min="0" max="400" step="1" value="200">
+            </div>
+        </div>
+        <div class="control-group">
+            <label>Cohesion Strength</label>
+            <div class="control-row">
+                <input type="range" id="cohesion_strength" min="0" max="2" step="0.05" value="0.3">
+                <input type="number" id="cohesion_strength_val" min="0" max="2" step="0.05" value="0.3">
+            </div>
+        </div>
+
+        <button id="clear_obstacles">Clear All Obstacles</button>
+    </div>
+
+    <div id="canvas-container">
+        <div id="status">Connecting...</div>
+        <canvas id="canvas"></canvas>
+    </div>
+    <script src="client.js"></script>
+</body>
+</html>
