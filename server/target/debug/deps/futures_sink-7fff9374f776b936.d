@@ -1,7 +1,0 @@
-/Users/antons/Desktop/git/lilfun/server/target/debug/deps/futures_sink-7fff9374f776b936.d: /Users/antons/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-sink-0.3.31/src/lib.rs
-
-/Users/antons/Desktop/git/lilfun/server/target/debug/deps/libfutures_sink-7fff9374f776b936.rlib: /Users/antons/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-sink-0.3.31/src/lib.rs
-
-/Users/antons/Desktop/git/lilfun/server/target/debug/deps/libfutures_sink-7fff9374f776b936.rmeta: /Users/antons/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-sink-0.3.31/src/lib.rs
-
-/Users/antons/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-sink-0.3.31/src/lib.rs:
